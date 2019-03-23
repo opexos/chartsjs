@@ -614,7 +614,8 @@
         ctx.shadowBlur = theme.hintShadowBlur;
         ctx.shadowOffsetX = theme.hintShadowOffsetX;
         ctx.shadowOffsetY = theme.hintShadowOffsetY;
-        ctx.style = theme.hintBackground;
+        ctx.strokeStyle = theme.hintBackground;
+        ctx.lineWidth = this.chart.dpr;
         ctx.stroke();
         ctx.shadowColor = 'transparent';
         ctx.fillStyle = theme.hintBackground;
@@ -770,7 +771,11 @@
             tmp = this.calcHintWindowWidth(this.selectedIdx);
             var hintWindowWidth = tmp[tmp.length - 1];
             var theme = this.chart.theme;
-            var newX = clamp(theme.hintShadowBlur, this.w - hintWindowWidth - theme.hintShadowBlur - theme.hintShadowOffsetX, x);
+            var maxX = this.w - hintWindowWidth * 1.1 - theme.hintShadowBlur - theme.hintShadowOffsetX;
+            var newX = x + 5 * this.chart.dpr;/*slightly to the right of the cursor/touch*/
+            if (newX > maxX) {//not enough space for hint at right of the cursor/touch
+                newX = clamp(theme.hintShadowBlur, maxX, x - hintWindowWidth - 5 * this.chart.dpr/*slightly to the left of the cursor/touch*/);
+            }
             var newY = clamp(theme.hintShadowBlur, this.h - this.hintWindowHeightWithShadow - theme.xAxisHeight,
                 y - theme.hintWindowDistance - this.hintWindowHeightWithShadow);
             this.addTransition([this.hintX || newX, this.hintY || newY], [newX, newY], 300, this, ['hintX', 'hintY'], this.redrawHint);
@@ -1116,22 +1121,22 @@
 
     opexcharts.dayTheme = {
         background: '#ffffff',
-        axisLineColor: '#dddddd',
-        axisLineWidth: 0.5,
         hintBackground: '#ffffff',
         hintTitleColor: '#404040',
-        hintTitleFontSize: 12,
-        hintValueFontSize: 14,
+        hintTitleFontSize: 11,
+        hintValueFontSize: 12,
         hintLineNameFontSize: 10,
         hintIndentBorder: 8,
         hintIndentTitleValue: 8,
         hintIndentValueName: 3,
-        hintShadow: 'rgba(0,0,0,0.3)',
+        hintShadow: 'rgba(0,0,0,0.5)',
         hintShadowBlur: 4,
         hintShadowOffsetX: 1,
         hintShadowOffsetY: 1,
         hintWindowRoundCorner: 10,
         hintWindowDistance: 30,
+        axisLineColor: '#dddddd',
+        axisLineWidth: 0.5,
         axisFontSize: 10,
         axisFontColor: "#999999",
         xAxisHeight: 30,
@@ -1159,23 +1164,23 @@
     };
 
     opexcharts.nightTheme = {
-        background: '#536471',
-        axisLineColor: 'rgba(200,200,200,0.4)',
-        axisLineWidth: 0.5,
-        hintBackground: '#60727f',
-        hintTitleColor: '#ffffff',
-        hintTitleFontSize: 12,
-        hintValueFontSize: 14,
+        background: '#242f3d',
+        hintBackground: '#1f2a38',
+        hintTitleColor: '#eeeeee',
+        hintTitleFontSize: 11,
+        hintValueFontSize: 12,
         hintLineNameFontSize: 10,
         hintIndentBorder: 8,
         hintIndentTitleValue: 8,
         hintIndentValueName: 3,
-        hintShadow: 'rgba(0,0,0,1)',
+        hintShadow: 'rgba(0,0,0,0.6)',
         hintShadowBlur: 4,
         hintShadowOffsetX: 1,
         hintShadowOffsetY: 1,
         hintWindowRoundCorner: 10,
         hintWindowDistance: 30,
+        axisLineColor: '#485c6d',
+        axisLineWidth: 0.5,
         axisFontSize: 10,
         axisFontColor: "#93aeba",
         xAxisHeight: 30,
@@ -1186,18 +1191,18 @@
         navChartLineWidth: 1,
         navChartHeight: 40,
         navChartIndent: 5,
-        navChartMaskColor: 'rgba(60,60,60,0.4)',
-        navChartFrameColor: '#567d90',
+        navChartMaskColor: 'rgba(20,31,44,0.5)',
+        navChartFrameColor: '#314d63',
         navChartFrameVerticalWidth: 10,
         navChartFrameHorizontalWidth: 1,
         buttonHeight: 30,
         buttonInterval: 10,
         buttonFontSize: 15,
-        buttonFontColor: '#ffffff',
-        buttonBorderColor: '#628598',
+        buttonFontColor: '#eeeeee',
+        buttonBorderColor: '#345467',
         buttonBorderWidth: 1,
         buttonCircleRadius: 10,
-        buttonMarkColor: '#ffffff',
+        buttonMarkColor: '#eeeeee',
         buttonBorderIndent: 5,
         componentInterval: 10
     };
