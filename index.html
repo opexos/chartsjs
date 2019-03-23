@@ -77,7 +77,7 @@
         //chart canvas
         var canvas = document.createElement('canvas');
         canvas.width = Math.min(window.innerWidth, 980) - 20 * DPR;
-        canvas.height = canvas.width;
+        canvas.height = isMobile() ? canvas.width : canvas.width / 2;
         document.body.appendChild(canvas);
 
         //create chart and save to array
