@@ -91,20 +91,27 @@
 
         this.canvas.addEventListener('mousemove', function (e) {
             e.preventDefault();
-            callForEach(self.objects, 'onMouseMove', e.offsetX, e.offsetY, false, e);
+            callForEach(self.objects, 'onMouseMove', e.offsetX, e.offsetY);
         });
 
         this.canvas.addEventListener('mousedown', function (e) {
             e.preventDefault();
             if (e.button === 0) {
-                callForEach(self.objects, 'onMouseDown', e.offsetX, e.offsetY, false, e);
+                callForEach(self.objects, 'onMouseDown', e.offsetX, e.offsetY);
             }
         });
 
         this.canvas.addEventListener('mouseup', function (e) {
             e.preventDefault();
             if (e.button === 0) {
-                callForEach(self.objects, 'onMouseUp', e.offsetX, e.offsetY, false, e);
+                callForEach(self.objects, 'onMouseUp', e.offsetX, e.offsetY);
+            }
+        });
+
+        this.canvas.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (e.button === 0) {
+                callForEach(self.objects, 'onClick', e.offsetX, e.offsetY);
             }
         });
 
@@ -119,18 +126,21 @@
         });
 
         this.canvas.addEventListener('touchstart', function (e) {
+            self.touch=true;
             var pos = self.getXY(e.changedTouches[0]);
-            callForEach(self.objects, 'onMouseDown', pos.x, pos.y, true, e);
+            callForEach(self.objects, 'onMouseDown', pos.x, pos.y);
         });
 
         this.canvas.addEventListener('touchend', function (e) {
+            self.touch=true;
             var pos = self.getXY(e.changedTouches[0]);
-            callForEach(self.objects, 'onMouseUp', pos.x, pos.y, true, e);
+            callForEach(self.objects, 'onMouseUp', pos.x, pos.y );
         });
 
         this.canvas.addEventListener('touchmove', function (e) {
+            self.touch=true;
             var pos = self.getXY(e.changedTouches[0]);
-            callForEach(self.objects, 'onMouseMove', pos.x, pos.y, true, e);
+            callForEach(self.objects, 'onMouseMove', pos.x, pos.y);
         });
     };
 
@@ -729,8 +739,8 @@
         }
     };
 
-    ChartWidget.prototype.onMouseDown = function (x, y, touch) {
-        if (touch && this.hit(x, y)) {
+    ChartWidget.prototype.onMouseDown = function (x, y) {
+        if (this.hit(x, y)) {
             //when touch show hint
             this.onMouseMove(x, y);
         }
@@ -912,7 +922,7 @@
             this.selEnd / (this.w - 1));
     };
 
-    NavChartWidget.prototype.onMouseMove = function (x, y, touch) {
+    NavChartWidget.prototype.onMouseMove = function (x, y) {
         var frameWidth = this.chart.theme.navChartFrameVerticalWidth;
         if (this.pressed) {
             if (this.hit(x, y)) {
@@ -941,7 +951,7 @@
                 this.notifySelectionChanged();//notify others that selection changed
             }
         }
-        if (!touch) {
+        if (!this.chart.touch) {
             var setDefault = true;
             var st = this.chart.canvas.style;
             if (this.hit(x, y)) {
@@ -957,8 +967,8 @@
         }
     };
 
-    NavChartWidget.prototype.calcCursor = function (x, y, touch) {
-        var increaseZone = touch ? 15 * this.chart.dpr : 0;
+    NavChartWidget.prototype.calcCursor = function (x, y) {
+        var increaseZone = this.chart.touch ? 15 * this.chart.dpr : 0;
         var frameWidth = this.chart.theme.navChartFrameVerticalWidth;
         var start = this.x + this.selStart;
         var leftStart = start - increaseZone;
@@ -978,11 +988,11 @@
         if (x > leftEnd && x < rightStart) return 'pointer';
     };
 
-    NavChartWidget.prototype.onMouseDown = function (x, y, touch) {
+    NavChartWidget.prototype.onMouseDown = function (x, y) {
         if (this.hit(x, y)) {
             this.pressed = true;
             this.pressedX = x;
-            this.pressedCursor = this.calcCursor(x, y, touch);
+            this.pressedCursor = this.calcCursor(x, y);
             this.selStartWhenPress = this.selStart;
             this.selEndWhenPress = this.selEnd;
         }
@@ -1084,7 +1094,7 @@
         }
     };
 
-    ButtonWidget.prototype.onMouseDown = function (x, y, touch, evt) {
+    ButtonWidget.prototype.onClick = function (x, y) {
         if (this.hit(x, y)) {
             this.checked = !this.checked;
             this.chart.lines[this.code].visible = this.checked;
@@ -1092,7 +1102,6 @@
             this.addTransition(this.visibility, this.checked ? 1 : 0, 150, this, 'visibility', function () {
                 this.redraw = true
             });
-            evt.preventDefault();
         }
     };
 
