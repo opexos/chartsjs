@@ -42,7 +42,6 @@
     var STR_SWITCH_TO_NIGHT = 'Switch to Night Mode';
     var STR_SWITCH_TO_DAY = 'Switch to Day Mode';
     var charts = [];
-    var loading = appendText("Loading data...");
 
     //request data
     var xhr = new XMLHttpRequest();
@@ -50,7 +49,6 @@
     xhr.send();
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
-            document.body.removeChild(loading);
             if (xhr.status === 200 || xhr.status === 304) {
                 buildPage(xhr.responseText);
             } else {
