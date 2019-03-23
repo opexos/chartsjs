@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OpexCharts</title>
+    <script src="opexcharts.js"></script>
+    <style>
+        html {
+            display: table;
+            margin: auto;
+        }
+
+        p {
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+        }
+
+        button {
+            background: none;
+            border: none;
+            color: #009ff8;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        button:hover {
+            cursor: pointer;
+        }
+
+        button:active {
+            color: #0076bd;
+        }
+    </style>
+
+</head>
+<body>
+<script>
+    'use strict';
+
+    var DPR = window.devicePixelRatio || 1;
+    var STR_SWITCH_TO_NIGHT = 'Switch to Night Mode';
+    var STR_SWITCH_TO_DAY = 'Switch to Day Mode';
+    var charts = [];
+    var loading = appendText("Loading data...");
+
+    //request data
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'chart_data.json', true);
+    xhr.send();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            document.body.removeChild(loading);
+            if (xhr.status === 200 || xhr.status === 304) {
+                buildPage(xhr.responseText);
+            } else {
+                appendText("Can't load data. Check your internet connection.");
+            }
+        }
+    };
+
+    //build page
+    function buildPage(jsonText) {
+        var data = JSON.parse(jsonText);
+
+        for (var i = 0; i < data.length; i++) {
+            appendChart(i + 1, data[i]);
+        }
+
+        appendThemeButton();
+    }
+
+    function appendChart(num, data) {
+        //title of chart
+        appendText('Chart #' + num);
+
+        //chart canvas
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.min(window.innerWidth, 980) - 30 * DPR;
+        canvas.height = canvas.width;
+        document.body.appendChild(canvas);
+
+        //create chart and save to array
+        charts.push(new opexcharts.Chart(canvas, data, undefined, DPR));
+
+        //space between charts
+        var div = document.createElement('div');
+        div.style.height = 20 * DPR + 'px';
+        document.body.appendChild(div);
+    }
+
+    function appendThemeButton() {
+        //create button for theme change
+        var btnTheme = document.createElement('button');
+        btnTheme.innerText = STR_SWITCH_TO_NIGHT;
+        btnTheme.style.padding = 20 * DPR + 'px';
+        btnTheme.style.fontSize = 20 * DPR + 'px';
+        btnTheme.onclick = function () {
+            if (btnTheme.innerText === STR_SWITCH_TO_NIGHT) {
+                setTheme(opexcharts.nightTheme);
+                btnTheme.innerText = STR_SWITCH_TO_DAY;
+            } else {
+                setTheme(opexcharts.dayTheme);
+                btnTheme.innerText = STR_SWITCH_TO_NIGHT;
+            }
+        };
+        var div = document.createElement('div');
+        div.style.textAlign = 'center';
+        div.appendChild(btnTheme);
+        document.body.appendChild(div);
+    }
+
+    function setTheme(theme) {
+        document.body.style.background = theme.background;
+        document.body.style.color = theme.buttonFontColor;
+        for (var i = 0; i < charts.length; i++) {
+            charts[i].setTheme(theme);
+        }
+    }
+
+    function appendText(text) {
+        var p = document.createElement('p');
+        p.style.fontSize = 20 * DPR + 'px';
+        p.innerText = text;
+        document.body.appendChild(p);
+        return p;
+    }
+
+</script>
+</body>
+</html>
