@@ -126,19 +126,19 @@
         });
 
         this.canvas.addEventListener('touchstart', function (e) {
-            self.touch=true;
+            self.touch = true;
             var pos = self.getXY(e.changedTouches[0]);
             callForEach(self.objects, 'onMouseDown', pos.x, pos.y);
         });
 
         this.canvas.addEventListener('touchend', function (e) {
-            self.touch=true;
+            self.touch = true;
             var pos = self.getXY(e.changedTouches[0]);
-            callForEach(self.objects, 'onMouseUp', pos.x, pos.y );
+            callForEach(self.objects, 'onMouseUp', pos.x, pos.y);
         });
 
         this.canvas.addEventListener('touchmove', function (e) {
-            self.touch=true;
+            self.touch = true;
             var pos = self.getXY(e.changedTouches[0]);
             callForEach(self.objects, 'onMouseMove', pos.x, pos.y);
         });
@@ -1033,7 +1033,7 @@
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     function ButtonWidget(chart, code, text, color, x, y) {
         this.setFont(chart.ctx, chart.theme.buttonFontSize);
-        Obj.call(this, chart, x, y, this.getTextWidth(chart.ctx, text) + chart.theme.buttonCircleRadius * 5, chart.theme.buttonHeight);
+        Obj.call(this, chart, x, y, this.getTextWidth(chart.ctx, text) + chart.theme.buttonCircleRadius * 4, chart.theme.buttonHeight);
         this.code = code;
         this.text = text;
         this.color = color;
@@ -1090,7 +1090,7 @@
             ctx.fillStyle = theme.buttonFontColor;
             ctx.textBaseline = 'middle';
             ctx.textAlign = 'left';
-            ctx.fillText(this.text, this.x + this.h * 1.2, this.y + halfHeight);
+            ctx.fillText(this.text, this.x + this.h, this.y + halfHeight);
         }
     };
 

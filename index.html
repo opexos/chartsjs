@@ -36,6 +36,9 @@
     'use strict';
 
     var DPR = window.devicePixelRatio || 1;
+    if (isMobile()) {
+        DPR = Math.floor(DPR) + 1;
+    }
     var STR_SWITCH_TO_NIGHT = 'Switch to Night Mode';
     var STR_SWITCH_TO_DAY = 'Switch to Day Mode';
     var charts = [];
@@ -73,7 +76,7 @@
 
         //chart canvas
         var canvas = document.createElement('canvas');
-        canvas.width = Math.min(window.innerWidth, 980) - 30 * DPR;
+        canvas.width = Math.min(window.innerWidth, 980) - 20 * DPR;
         canvas.height = canvas.width;
         document.body.appendChild(canvas);
 
@@ -121,6 +124,16 @@
         p.innerText = text;
         document.body.appendChild(p);
         return p;
+    }
+
+    function isMobile() {
+        return navigator.userAgent.match(/Android/i)
+            || navigator.userAgent.match(/webOS/i)
+            || navigator.userAgent.match(/iPhone/i)
+            || navigator.userAgent.match(/iPad/i)
+            || navigator.userAgent.match(/iPod/i)
+            || navigator.userAgent.match(/BlackBerry/i)
+            || navigator.userAgent.match(/Windows Phone/i);
     }
 
 </script>
