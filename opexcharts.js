@@ -669,6 +669,7 @@
 
     ChartWidget.prototype.processSelectionChanged = function () {
         if (this.end < this.start) return; //transitions in progress
+        this.splitX = undefined;
         this.redrawLines = true;
         this.redrawXAxis = true;
         this.xStep = this.w / ((this.end - this.start) * this.strokes);
@@ -771,10 +772,11 @@
             tmp = this.calcHintWindowWidth(this.selectedIdx);
             var hintWindowWidth = tmp[tmp.length - 1];
             var theme = this.chart.theme;
-            var maxX = this.w - hintWindowWidth * 1.1 - theme.hintShadowBlur - theme.hintShadowOffsetX;
+            var maxX = this.w - hintWindowWidth - theme.hintShadowBlur - theme.hintShadowOffsetX;
             var newX = x + 5 * this.chart.dpr;/*slightly to the right of the cursor/touch*/
-            if (newX > maxX) {//not enough space for hint at right of the cursor/touch
+            if (newX > maxX || x >= this.splitX) {//not enough space for hint at right of the cursor/touch
                 newX = clamp(theme.hintShadowBlur, maxX, x - hintWindowWidth - 5 * this.chart.dpr/*slightly to the left of the cursor/touch*/);
+                this.splitX = Math.min(this.splitX || x, x);
             }
             var newY = clamp(theme.hintShadowBlur, this.h - this.hintWindowHeightWithShadow - theme.xAxisHeight,
                 y - theme.hintWindowDistance - this.hintWindowHeightWithShadow);
@@ -833,6 +835,7 @@
         BaseChart.prototype.visibleLinesChanged.apply(this, arguments);
         //clear cached coordinates for hint window
         this.hintWindowWidth = [];
+        this.splitX = undefined;
     };
 
     ChartWidget.prototype.recalcVertical = function () {
